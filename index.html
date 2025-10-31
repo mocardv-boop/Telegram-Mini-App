@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prize Bot - Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .button-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .button-primary:hover {
+            background: #0056b3;
+        }
+        
+        .button-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .button-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .prize-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .prize-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .prize-description {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>🎁 Prize Bot</h1>
+                <p>Ежедневные призы и розыгрыши</p>
+            </div>
+            
+            <div id="userInfo"></div>
+            
+            <button class="button button-primary" onclick="playGame()">
+                🎮 Играть сегодня
+            </button>
+            
+            <button class="button button-secondary" onclick="showPrizes()">
+                📦 Мои призы
+            </button>
+            
+            <button class="button button-secondary" onclick="showProfile()">
+                👤 Профиль
+            </button>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="prizesCount">0</div>
+                    <div class="stat-label">Получено призов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="daysPlayed">0</div>
+                    <div class="stat-label">Дней игры</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card prize-card" id="prizeResult" style="display: none;">
+            <div class="prize-title" id="prizeName"></div>
+            <div class="prize-description" id="prizeDescription"></div>
+        </div>
+        
+        <div class="card" id="prizesList" style="display: none;">
+            <h3>📦 Ваши призы</h3>
+            <div id="prizesContainer"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
