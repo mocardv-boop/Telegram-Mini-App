@@ -1,5 +1,5 @@
 # URL для GitHub Pages
-GITHUB_PAGES_URL = "https://your-username.github.io/your-repo-name"
+GITHUB_PAGES_URL = "https://mocardv-boop.github.io/Telegram_bot"
 
 async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
