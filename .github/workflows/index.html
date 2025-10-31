@@ -3,16 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prize Bot Mini App</title>
+    <title>Prize Bot - Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="telegram:app_id" content="ваш-app-id">
+    <meta name="telegram:app_url" content="https://ваш-username.github.io/ваш-repo/">
+    
     <style>
-        /* Ваши стили */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .button-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .button-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .button-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .prize-result {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div id="app">
-        <!-- Интерфейс приложения -->
+    <div class="container">
+        <div class="header">
+            <h1>🎁 Prize Bot</h1>
+            <p>Ежедневные призы и розыгрыши</p>
+        </div>
+        
+        <div class="card">
+            <div id="userInfo">
+                <p style="text-align: center;">Загрузка...</p>
+            </div>
+            
+            <button class="button button-primary" onclick="playGame()">
+                🎮 Играть сегодня
+            </button>
+            
+            <button class="button button-secondary" onclick="showPrizes()">
+                📦 Мои призы
+            </button>
+            
+            <button class="button button-secondary" onclick="showProfile()">
+                👤 Профиль
+            </button>
+        </div>
+        
+        <div class="card prize-result hidden" id="result">
+            <!-- Результат будет здесь -->
+        </div>
     </div>
-    <script src="app.js"></script>
+
+    <script>
+        // Telegram Web App
+        const tg = window.Telegram.WebApp;
+        let currentView = 'main';
+        
+        // Инициализация
+        function init() {
+            tg.expand();
+            tg.enableClosingConfirmation();
+            tg.ready();
+            
+            // Показываем информацию о пользователе
+            showUserInfo();
+            
+            // Настройка кнопки "Назад"
+            tg.BackButton.onClick(goBack);
+        }
+        
+        // Показать информацию о пользователе
+        function showUserInfo() {
+            const user = tg.initDataUnsafe.user;
+            if (user) {
+                document.getElementById('userInfo').innerHTML = `
+                    <div style="text-align: center;">
+                        <p>Привет, <strong>${user.first_name}</strong>! 👋</p>
+                    </div>
+                `;
+            } else {
+                document.getElementById('userInfo').innerHTML = `
+                    <div style="text-align: center;">
+                        <p>Добро пожаловать! 👋</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Играть в игру
+        function playGame() {
+            const prizes = [
+                {name: "🎁 10% скидка", duration: "24 часа", chance: 40},
+                {name: "🚚 Бесплатная доставка", duration: "24 часа", chance: 30},
+                {name: "🎁 Подарок от партнера", duration: "24 часа", chance: 20},
+                {name: "💎 Специальный приз", duration: "24 часа", chance: 10}
+            ];
+            
+            // Простая логика рандома
+            const random = Math.random() * 100;
+            let prize = prizes[0];
+            let currentChance = 0;
+            
+            for (const p of prizes) {
+                currentChance += p.chance;
+                if (random <= currentChance) {
+                    prize = p;
+                    break;
+                }
+            }
+            
+            showResult(`
+                <h2>🎉 Поздравляем!</h2>
+                <p style="font-size: 20px; margin: 15px 0;">${prize.name}</p>
+                <p>Приз действует: ${prize.duration}</p>
+                <button class="button button-success" onclick="goBack()">
+                    👍 Отлично!
+                </button>
+            `);
+        }
+        
+        // Показать призы
+        function showPrizes() {
+            showResult(`
+                <h2>📦 Ваши призы</h2>
+                <div style="text-align: left; margin: 15px 0;">
+                    <p>✅ 🎁 10% скидка (активно 12ч)</p>
+                    <p>✅ 🚚 Бесплатная доставка (активно 5ч)</p>
+                    <p>❌ 💎 Специальный приз (закончился)</p>
+                </div>
+                <button class="button button-primary" onclick="goBack()">
+                    Назад
+                </button>
+            `);
+        }
+        
+        // Показать профиль
+        function showProfile() {
+            const user = tg.initDataUnsafe.user;
+            let userInfo = '';
+            
+            if (user) {
+                userInfo = `
+                    <p><strong>Имя:</strong> ${user.first_name} ${user.last_name || ''}</p>
+                    <p><strong>Username:</strong> @${user.username || 'не указан'}</p>
+                    <p><strong>ID:</strong> ${user.id}</p>
+                `;
+            } else {
+                userInfo = '<p>Информация о пользователе недоступна</p>';
+            }
+            
+            showResult(`
+                <h2>👤 Ваш профиль</h2>
+                <div style="text-align: left; margin: 15px 0;">
+                    ${userInfo}
+                </div>
+                <button class="button button-primary" onclick="goBack()">
+                    Назад
+                </button>
+            `);
+        }
+        
+        // Показать результат
+        function showResult(content) {
+            document.getElementById('result').innerHTML = content;
+            document.getElementById('result').classList.remove('hidden');
+            tg.BackButton.show();
+            currentView = 'result';
+        }
+        
+        // Назад
+        function goBack() {
+            if (currentView === 'result') {
+                document.getElementById('result').classList.add('hidden');
+                tg.BackButton.hide();
+                currentView = 'main';
+            }
+        }
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
