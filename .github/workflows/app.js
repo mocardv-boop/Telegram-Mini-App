@@ -1,7 +1,7 @@
 class TelegramMiniApp {
     constructor() {
         this.tg = window.Telegram.WebApp;
-        this.apiBaseUrl = 'https://your-bot-backend.com/api'; // URL вашего бота
+        this.apiBaseUrl = ' t.me/Istoriyaa_bot'; // URL вашего бота
         this.init();
     }
 
